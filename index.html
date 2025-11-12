@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Heart Health Risk Detector</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <main class="w-full flex-grow pt-12" id="calculator">
+        <div class="container mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10 space-y-8 my-12">
+            <header class="text-center relative">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-red-600 mb-2">Heart Health Risk Detector</h1>
+                <!-- <p class="text-sm text-gray-500 font-semibold mb-4">A College Project</p>
+
+                <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md">
+                    <p class="font-bold">Disclaimer:</p>
+                    <p class="text-sm">This tool is for educational purposes only and provides general health information. It is not a substitute for professional medical advice.</p>
+                </div> -->
+            </header>
+
+            <form id="healthForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Personal Details</h2>
+                        <div class="space-y-4">
+                            <label class="block">
+                                <span class="text-gray-700">Age (years)</span>
+                                <input type="number" id="age" min="1" max="120" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Gender</span>
+                                <select id="gender" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Weight (kg)</span>
+                                <input type="number" id="weight" min="1" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Height (cm)</span>
+                                <input type="number" id="height" min="100" max="250" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Waist Circumference (cm)</span>
+                                <input type="number" id="waist" min="1" max="200" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Socio-economic Status</span>
+                                <select id="socioEconomicStatus" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                                    <option value="High">High</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">City/Region of Residence</span>
+                                <input type="text" id="city" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" placeholder="e.g., Mumbai, Rural Area">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Lifestyle Habits</h2>
+                        <div class="space-y-4">
+                            <label class="block">
+                                <span class="text-gray-700">Daily Steps (average)</span>
+                                <input type="number" id="steps" min="0" max="50000" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Junk Food (times/week)</span>
+                                <input type="number" id="junkFood" min="0" max="50" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Exercise (hours/week)</span>
+                                <input type="number" id="exercise" min="0" max="40" step="0.5" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Alcohol (drinks/week)</span>
+                                <input type="number" id="alcohol" min="0" max="50" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Daily Smoking Habits</span>
+                                <select id="smoking" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Daily Sleep (avg. hours)</span>
+                                <input type="number" id="sleep" min="0" max="16" step="0.5" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700">Stress Level</span>
+                                <select id="stress" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                                    <option value="1">Low</option>
+                                    <option value="2">Medium</option>
+                                    <option value="3">High</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Medical Information</h2>
+                    <div class="space-y-4">
+                        <label class="block">
+                            <span class="text-gray-700">Family Medical History of Heart Disease?</span>
+                            <select id="familyHistory" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="highBp" class="rounded text-red-600">
+                            <span class="text-gray-700">High Blood Pressure</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="diabetes" class="rounded text-red-600">
+                            <span class="text-gray-700">Diabetes</span>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Any Existing Medical Conditions (e.g., Asthma, Thyroid)</span>
+                            <textarea id="conditions" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"></textarea>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg shadow-inner">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Optional Blood Test Data</h2>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-500">Provide these for a more "accurate" score.</p>
+                        <label class="block">
+                            <span class="text-gray-700">Total Cholesterol (mg/dL)</span>
+                            <input type="number" id="cholesterol" min="0" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                            <p class="text-xs text-gray-500 mt-1">Range: 0 to 500</p>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">RBC Count (millions/µL)</span>
+                            <input type="number" id="rbc" min="0" max="10" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                            <p class="text-xs text-gray-500 mt-1">Range: 0 to 10</p>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">WBC Count (thousands/µL)</span>
+                            <input type="number" id="wbc" min="0" max="100" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50">
+                            <p class="text-xs text-gray-500 mt-1">Range: 0 to 100</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 flex flex-col md:flex-row items-center justify-center gap-4">
+                    <button type="button" id="clearFormBtn" class="w-full md:w-auto px-6 py-3 bg-gray-200 text-gray-800 font-bold rounded-full shadow-md hover:bg-gray-300 transition">
+                        Clear All Inputs
+                    </button>
+                    <button type="submit" class="w-full md:w-auto px-6 py-3 bg-red-600 text-white font-bold rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105">
+                        Calculate Heart Health Score
+                    </button>
+                </div>
+            </form>
+
+            <div id="result" class="mt-8 p-6 bg-red-50 rounded-lg shadow-md hidden">
+                <h2 class="text-2xl font-bold text-center text-red-700 mb-8">Your Heart Health Score</h2>
+                <div class="flex flex-col items-center">
+                    <div class="meter-container mb-4">
+                        <div id="meterFill" class="meter-fill" style="width: 0%;"></div>
+                        <div class="meter-threshold" style="left: 33.3%;"></div>
+                        <div class="meter-threshold" style="left: 66.6%;"></div>
+                    </div>
+                    <div class="relative w-full max-w-sm flex justify-between text-xs font-bold -mt-2 text-gray-600">
+                        <span class="absolute left-0">Low</span>
+                        <span class="absolute left-1/3 -translate-x-1/2">Moderate</span>
+                        <span class="absolute left-2/3 -translate-x-1/2">High</span>
+                    </div>
+                    <div class="text-center mt-8">
+                        <p class="text-lg font-semibold text-gray-800">Risk Score (0-60): <span id="riskScore" class="font-extrabold text-red-600 text-xl">--</span></p>
+                        <p class="text-xl font-extrabold" id="riskLevel">Calculating...</p>
+                        <p class="text-sm text-gray-600" id="riskMessage"></p>
+                    </div>
+                </div>
+
+                <div id="aiResult" class="mt-8 p-4 bg-red-100 rounded-lg shadow-inner">
+                    <h3 class="text-lg font-bold text-gray-800 text-center mb-2">AI 10-Year Risk Prediction</h3>
+                    <p id="aiPrediction" class="text-center text-red-700 font-extrabold text-2xl">Analyzing...</p>
+                    <p class="text-xs text-gray-500 text-center mt-1">This is a simulated AI result for demonstration. A real model requires a secure backend.</p>
+                </div>
+
+                <div id="precaution-steps" class="mt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Recommended First Steps & Precautions</h3>
+                    <ul id="precautionsList" class="text-gray-700 space-y-1 list-disc-outside">
+                        <li>Loading recommendations...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <section id="dashboardPage" class="container mx-auto bg-white rounded-xl shadow p-6 md:p-10 space-y-6 my-12 hidden">
+            <h2 class="text-2xl font-bold text-gray-800">Your Health Dashboard</h2>
+            <div id="recordsContainer" class="space-y-4 text-gray-700">
+                <p class="text-sm text-gray-500">No records to show. Sign in to save results and view them here.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="w-full bg-white shadow-inner mt-auto">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm text-gray-500">&copy; 2025 HeartHealth Project. For educational purposes only.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-sm text-gray-500 hover:text-red-600">Privacy Policy</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-red-600">Terms of Use</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-red-600">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

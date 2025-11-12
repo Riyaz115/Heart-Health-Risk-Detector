@@ -1,0 +1,36 @@
+body {
+    font-family: 'Inter', sans-serif;
+    /* Force consistent light gray background */
+    background-color: #f3f4f6; /* This is tailwind bg-gray-100 */
+}
+.container {
+    max-width: 800px;
+}
+.list-disc-outside {
+    list-style-type: disc;
+    list-style-position: outside;
+    padding-left: 1.5rem;
+}
+.meter-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    height: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    background: #e5e7eb; /* subtle light bg */
+}
+.meter-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1.5s ease-in-out;
+    background: linear-gradient(to right, #22c55e, #facc15, #ef4444);
+}
+.meter-threshold {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    z-index: 10;
+    background: #9ca3af;
+}
