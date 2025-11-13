@@ -12,114 +12,348 @@
 <body class="flex flex-col min-h-screen">
 
     <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <div>
-                <span class="text-3xl font-extrabold text-red-600">Heart Health Risk Detector</span>
+        <div class="container mx-auto px-4 sm:px-6 py-3 flex flex-wrap justify-between items-center">
+            <div class="flex-shrink-0">
+                <span class="text-2xl sm:text-3xl font-extrabold text-red-600">Heart Health Risk Detector</span>
             </div>
             
-            <div class="flex items-center space-x-4">
-                <span id="userEmail" class="text-sm text-gray-600 hidden"></span>
-                <button id="showLoginBtn" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700">Login / Sign Up</button>
-                <button id="signOutBtn" class="text-sm text-gray-500 hover:text-red-600 font-medium hidden">Sign Out</button>
+            <div class="flex items-center space-x-2 sm:space-x-4 order-2 sm:order-3">
+                <span id="userEmail" class="text-xs sm:text-sm text-gray-600 hidden truncate max-w-[120px] sm:max-w-none"></span>
+                <button id="showLoginBtn" class="px-3 sm:px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-full hover:bg-red-700">Login / Sign Up</button>
+                <button id="signOutBtn" class="text-xs sm:text-sm text-gray-500 hover:text-red-600 font-medium hidden">Sign Out</button>
+            </div>
+
+            <div class="flex justify-center space-x-4 sm:space-x-8 order-3 sm:order-2 w-full sm:w-auto mt-3 sm:mt-0">
+                <button id="navCalculator" class="text-red-600 font-bold text-sm sm:text-base">Calculator</button>
+                <button id="navDashboard" class="text-gray-500 hover:text-red-600 font-bold hidden text-sm sm:text-base">Dashboard</button>
+                <button id="navSettings" class="text-gray-500 hover:text-red-600 font-bold hidden text-sm sm:text-base">Settings</button>
             </div>
         </div>
     </nav>
-    <div class="bg-white shadow-sm sticky top-[65px] z-40"> <div class="container mx-auto px-6 flex justify-center space-x-8">
-            <button id="navCalculator" class="text-red-600 border-b-2 border-red-600 font-bold py-3">Calculator</button>
-            <button id="navDashboard" class="text-gray-500 hover:text-red-600 font-bold py-3 hidden">Dashboard</button>
-        </div>
+    
+    <div class="w-full bg-gray-200 h-1 z-30">
+        <div id="formProgress" class="bg-red-600 h-1 transition-all duration-300" style="width: 0%"></div>
     </div>
-    <main class="w-full flex-grow pt-12" id="calculator">
+
+    <main class="w-full flex-grow pt-6 sm:pt-12" id="calculator">
         
-        <div id="formContainer" class="container mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10 space-y-8 my-12">
+        <div id="formContainer" class="container mx-auto bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 my-6 sm:my-12">
             
-            <header class="text-center relative">
-                <h1 class="text-3xl md:text-4xl font-extrabold text-red-600 mb-2">Heart Health Risk Detector</h1>
-            </header>
+            <!-- <header class="text-center relative">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-red-600 mb-2">Heart Health Risk Detector</h1>
+                <p class="text-xs sm:text-sm text-gray-500 mt-2">Educational tool - Not for medical diagnosis</p>
+            </header> -->
+
+            <div id="draftNotification" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-blue-600">💾</span>
+                    <span class="text-sm text-blue-800">Draft found! Would you like to restore it?</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="loadDraftBtn" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">Load</button>
+                    <button id="dismissDraftBtn" class="px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400">Dismiss</button>
+                </div>
+            </div>
             
-            <form id="healthForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form id="healthForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
-                        <h2 class="text-xl font-bold text-gray-800 mb-2">Personal Details</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Personal Details</h2>
                         <div class="space-y-4">
-                            <label class="block"><span class="text-gray-700">Age (years)</span><input type="number" id="age" min="1" max="120" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Gender</span><select id="gender" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"><option value="Male">Male</option><option value="Female">Female</option></select></label>
-                            <label class="block"><span class="text-gray-700">Weight (kg)</span><input type="number" id="weight" min="1" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Height (cm)</span><input type="number" id="height" min="100" max="250" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Waist Circumference (cm)</span><input type="number" id="waist" min="1" max="200" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Socio-economic Status</span><select id="socioEconomicStatus" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"><option value="High">High</option><option value="Medium" selected>Medium</option><option value="Low">Low</option></select></label>
-                            <label class="block"><span class="text-gray-700">City/Region of Residence</span><input type="text" id="city" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" placeholder="e.g., Mumbai, Rural Area"></label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Name</span>
+                                <input type="text" id="name"
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required
+                                    oninvalid="this.setCustomValidity('Please enter your name')"
+                                    oninput="this.setCustomValidity('')">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Age (years)</span>
+                                <input type="number" id="age" min="1" max="120" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required
+                                    oninvalid="this.setCustomValidity('Please enter age between 1-120')"
+                                    oninput="this.setCustomValidity('')">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Gender</span>
+                                <select id="gender" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Weight (kg)</span>
+                                <input type="number" id="weight" min="1" max="500" step="0.1"
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required
+                                    oninvalid="this.setCustomValidity('Please enter weight between 1-500 kg')"
+                                    oninput="this.setCustomValidity('')">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Height (cm)</span>
+                                <input type="number" id="height" min="100" max="250" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required
+                                    oninvalid="this.setCustomValidity('Please enter height between 100-250 cm')"
+                                    oninput="this.setCustomValidity('')">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Waist Circumference (cm)</span>
+                                <input type="number" id="waist" min="1" max="200" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required
+                                    oninvalid="this.setCustomValidity('Please enter waist circumference between 1-200 cm')"
+                                    oninput="this.setCustomValidity('')">
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Socio-economic Status</span>
+                                <select id="socioEconomicStatus" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                    <option value="High">High</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </label>
                         </div>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
-                        <h2 class="text-xl font-bold text-gray-800 mb-2">Lifestyle Habits</h2>
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Lifestyle Habits</h2>
                         <div class="space-y-4">
-                            <label class="block"><span class="text-gray-700">Daily Steps (average)</span><input type="number" id="steps" min="0" max="50000" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Junk Food (times/week)</span><input type="number" id="junkFood" min="0" max="50" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Exercise (hours/week)</span><input type="number" id="exercise" min="0" max="40" step="0.5" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Alcohol (drinks/week)</span><input type="number" id="alcohol" min="0" max="50" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Daily Smoking Habits</span><select id="smoking" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"><option value="0">No</option><option value="1">Yes</option></select></label>
-                            <label class="block"><span class="text-gray-700">Daily Sleep (avg. hours)</span><input type="number" id="sleep" min="0" max="16" step="0.5" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50" required></label>
-                            <label class="block"><span class="text-gray-700">Stress Level</span><select id="stress" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"><option value="1">Low</option><option value="2">Medium</option><option value="3">High</option></select></label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Daily Steps (average)</span>
+                                <input type="number" id="steps" min="0" max="50000" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Junk Food (times/week)</span>
+                                <input type="number" id="junkFood" min="0" max="50" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Exercise (hours/week)</span>
+                                <input type="number" id="exercise" min="0" max="40" step="0.5" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Alcohol (drinks/week)</span>
+                                <input type="number" id="alcohol" min="0" max="50" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Daily Smoking Habits</span>
+                                <select id="smoking" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Daily Sleep (avg. hours)</span>
+                                <input type="number" id="sleep" min="0" max="16" step="0.5" 
+                                    class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
+                                    required>
+                            </label>
+                            <label class="block">
+                                <span class="text-gray-700 text-sm">Stress Level</span>
+                                <select id="stress" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                    <option value="1">Low</option>
+                                    <option value="2">Medium</option>
+                                    <option value="3">High</option>
+                                </select>
+                            </label>
                         </div>
                     </div>
                 </div>
                 <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg shadow-inner">
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">Medical Information</h2>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Medical Information</h2>
                     <div class="space-y-4">
-                        <label class="block"><span class="text-gray-700">Family Medical History of Heart Disease?</span><select id="familyHistory" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"><option value="0">No</option><option value="1">Yes</option></select></label>
-                        <label class="flex items-center space-x-2"><input type="checkbox" id="highBp" class="rounded text-red-600"><span class="text-gray-700">High Blood Pressure</span></label>
-                        <label class="flex items-center space-x-2"><input type="checkbox" id="diabetes" class="rounded text-red-600"><span class="text-gray-700">Diabetes</span></label>
-                        <label class="block"><span class="text-gray-700">Any Existing Medical Conditions (e.g., Asthma, Thyroid)</span><textarea id="conditions" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"></textarea></label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Family Medical History of Heart Disease?</span>
+                            <select id="familyHistory" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="highBp" class="rounded text-red-600">
+                            <span class="text-gray-700 text-sm">High Blood Pressure</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="diabetes" class="rounded text-red-600">
+                            <span class="text-gray-700 text-sm">Diabetes</span>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Any Existing Medical Conditions (e.g., Asthma, Thyroid)</span>
+                            <textarea id="conditions" rows="2" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm"></textarea>
+                        </label>
                     </div>
                 </div>
                 <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg shadow-inner">
-                    <h2 class="text-xl font-bold text-gray-800 mb-2">Optional Blood Test Data</h2>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">
+                        Optional Blood Test Data
+                        <span class="tooltip text-gray-500 cursor-help ml-2" title="Providing blood test results can improve accuracy of the risk assessment">ℹ️</span>
+                    </h2>
                     <div class="space-y-4">
-                        <p class="text-sm text-gray-500">Provide these for a more "accurate" score.</p>
-                        <label class="block"><span class="text-gray-700">Total Cholesterol (mg/dL)</span><input type="number" id="cholesterol" min="0" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"></label>
-                        <label class="block"><span class="text-gray-700">RBC Count (millions/µL)</span><input type="number" id="rbc" min="0" max="10" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"></label>
-                        <label class="block"><span class="text-gray-700">WBC Count (thousands/µL)</span><input type="number" id="wbc" min="0" max="100" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50"></label>
+                        <p class="text-xs sm:text-sm text-gray-500">Provide these for a more accurate score.</p>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Total Cholesterol (mg/dL)</span>
+                            <input type="number" id="cholesterol" min="0" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">
+                                RBC Count (millions/µL)
+                                <span class="tooltip text-gray-500 cursor-help" title="Red Blood Cell count measures oxygen-carrying capacity">ℹ️</span>
+                            </span>
+                            <input type="number" id="rbc" min="0" max="10" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">
+                                WBC Count (thousands/µL)
+                                <span class="tooltip text-gray-500 cursor-help" title="White Blood Cell count indicates immune system health">ℹ️</span>
+                            </span>
+                            <input type="number" id="wbc" min="0" max="100" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                        </label>
                     </div>
                 </div>
-                <div class="md:col-span-2 flex flex-col md:flex-row items-center justify-center gap-4">
-                    <button type="button" id="clearFormBtn" class="w-full md:w-auto px-6 py-3 bg-gray-200 text-gray-800 font-bold rounded-full shadow-md hover:bg-gray-300 transition">Clear All Inputs</button>
-                    <button type="submit" class="w-full md:w-auto px-6 py-3 bg-red-600 text-white font-bold rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105">Calculate Heart Health Score</button>
+                <div class="md:col-span-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                    <button type="button" id="clearFormBtn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-800 text-sm font-bold rounded-full shadow-md hover:bg-gray-300 transition">Clear All Inputs</button>
+                    <button type="submit" id="submitBtn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white text-sm font-bold rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105">Calculate Heart Health Score</button>
                 </div>
             </form>
 
-            <div id="result" class="mt-8 p-6 bg-red-50 rounded-lg shadow-md hidden">
-                <h2 class="text-2xl font-bold text-center text-red-700 mb-8">Your Heart Health Score</h2>
-                <div class="flex flex-col items-center"><div class="meter-container mb-4"><div id="meterFill" class="meter-fill" style="width: 0%;"></div><div class="meter-threshold" style="left: 33.3%;"></div><div class="meter-threshold" style="left: 66.6%;"></div></div><div class="relative w-full max-w-sm flex justify-between text-xs font-bold -mt-2 text-gray-600"><span class="absolute left-0">Low</span><span class="absolute left-1/3 -translate-x-1/2">Moderate</span><span class="absolute left-2/3 -translate-x-1/2">High</span></div><div class="text-center mt-8"><p class="text-lg font-semibold text-gray-800">Risk Score (0-60): <span id="riskScore" class="font-extrabold text-red-600 text-xl">--</span></p><p class="text-xl font-extrabold" id="riskLevel">Calculating...</p><p class="text-sm text-gray-600" id="riskMessage"></p></div></div>
-                <div id="aiResult" class="mt-8 p-4 bg-red-100 rounded-lg shadow-inner"><h3 class="text-lg font-bold text-gray-800 text-center mb-2">AI 10-Year Risk Prediction</h3><p id="aiPrediction" class="text-center text-red-700 font-extrabold text-2xl">Analyzing...</p><p class="text-xs text-gray-500 text-center mt-1">This is a simulated AI result for demonstration. A real model requires a secure backend.</p></div>
-                <div id="precaution-steps" class="mt-6"><h3 class="text-lg font-bold text-gray-800 mb-2">Recommended First Steps & Precautions</h3><ul id="precautionsList" class="text-gray-700 space-y-1 list-disc-outside"><li>Loading recommendations...</li></ul></div>
+            <div id="result" class="mt-6 sm:mt-8 p-4 sm:p-6 bg-red-50 rounded-lg shadow-md hidden">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-xl sm:text-2xl font-bold text-red-700">Your Heart Health Score</h2>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="meter-container mb-4 w-full">
+                        <div id="meterFill" class="meter-fill" style="width: 0%;"></div>
+                        <div class="meter-threshold" style="left: 33.3%;"></div>
+                        <div class="meter-threshold" style="left: 66.6%;"></div>
+                    </div>
+                    <div class="relative w-full flex justify-between text-xs font-bold -mt-2 text-gray-600 px-2">
+                        <span>Low</span>
+                        <span>Moderate</span>
+                        <span>High</span>
+                    </div>
+                    <div class="text-center mt-6 sm:mt-8">
+                        <p class="text-base sm:text-lg font-semibold text-gray-800">Risk Score (0-60): <span id="riskScore" class="font-extrabold text-red-600 text-lg sm:text-xl">--</span></p>
+                        <p class="text-lg sm:text-xl font-extrabold" id="riskLevel">Calculating...</p>
+                        <p class="text-xs sm:text-sm text-gray-600" id="riskMessage"></p>
+                    </div>
+                </div>
+                <div id="aiResult" class="mt-6 sm:mt-8 p-4 bg-red-100 rounded-lg shadow-inner">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-800 text-center mb-2">AI 10-Year Risk Prediction</h3>
+                    <p id="aiPrediction" class="text-center text-red-700 font-extrabold text-xl sm:text-2xl">Analyzing...</p>
+                    <p class="text-xs text-gray-500 text-center mt-1">This is a simulated AI result for demonstration. A real model requires a secure backend.</p>
+                </div>
+                <div id="precaution-steps" class="mt-4 sm:mt-6">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-2">Recommended First Steps & Precautions</h3>
+                    <ul id="precautionsList" class="text-sm sm:text-base text-gray-700 space-y-1 list-disc pl-5">
+                        <li>Loading recommendations...</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <section id="dashboardPage" class="container mx-auto bg-white rounded-xl shadow p-6 md:p-10 space-y-6 my-12 hidden">
-            <h2 class="text-2xl font-bold text-gray-800">Your Health Dashboard</h2>
+
+        <section id="dashboardPage" class="container mx-auto bg-white rounded-xl shadow p-4 sm:p-6 md:p-10 space-y-6 my-6 sm:my-12 hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-800">Your Health Dashboard</h2>
+                <button id="exportDataBtn" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-full hover:bg-blue-700 transition">
+                    📥 Export Data
+                </button>
+            </div>
+            
+            <div id="trendSummary" class="hidden bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+                <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-2">Trend Analysis</h3>
+                <div id="trendContent" class="text-sm text-gray-700"></div>
+            </div>
+
             <div id="recordsContainer" class="space-y-4 text-gray-700">
                 <p class="text-sm text-gray-500">No records to show. Sign in to save results and view them here.</p>
             </div>
+            
+            <div id="loadMoreContainer" class="text-center hidden">
+                <button id="loadMoreBtn" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-full hover:bg-gray-300 transition">
+                    Load More Records
+                </button>
+            </div>
         </section>
-        </main>
-    <div id="authModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md relative">
+
+        <section id="settingsPage" class="container mx-auto bg-white rounded-xl shadow p-4 sm:p-6 md:p-10 space-y-6 my-6 sm:my-12 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6">Settings & Privacy</h2>
+            
+            <div class="space-y-6">
+                <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Account Information</h3>
+                    <div class="space-y-2 text-sm">
+                        <p><span class="font-semibold">Email:</span> <span id="settingsEmail" class="text-gray-600">Not logged in</span></p>
+                        <p><span class="font-semibold">User ID:</span> <span id="settingsUserId" class="text-gray-600 text-xs">N/A</span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Data Management</h3>
+                    <div class="space-y-3">
+                        <button id="exportAllDataBtn" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:bg-blue-700 transition">
+                            📥 Export All My Data
+                        </button>
+                        <p class="text-xs text-gray-500">Download all your health records in JSON format</p>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 p-4 sm:p-6 rounded-lg border border-red-200">
+                    <h3 class="text-lg font-bold text-red-800 mb-4">Danger Zone</h3>
+                    <div class="space-y-3">
+                        <button id="deleteAllRecordsBtn" class="w-full sm:w-auto px-6 py-3 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition">
+                            🗑️ Delete All Records
+                        </button>
+                        <p class="text-xs text-gray-600">This will permanently delete all your health records but keep your account</p>
+                        
+                        <hr class="my-4 border-red-200">
+                        
+                        <button id="deleteAccountBtn" class="w-full sm:w-auto px-6 py-3 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 transition">
+                            ⚠️ Delete My Account
+                        </button>
+                        <p class="text-xs text-red-600 font-semibold">This will permanently delete your account and all data. This action cannot be undone!</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Privacy Information</h3>
+                    <div class="text-sm text-gray-700 space-y-2">
+                        <p>• Your data is stored securely in Firebase Firestore</p>
+                        <p>• Only you can access your health records</p>
+                        <p>• We do not share your data with third parties</p>
+                        <p>• You can export or delete your data at any time</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="authModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-md relative">
             <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
             
             <div id="authContent">
                 <div class="flex border-b mb-6">
-                    <button id="loginTab" class="w-1/2 py-3 text-center font-semibold text-red-600 border-b-2 border-red-600">Log In</button>
-                    <button id="signUpTab" class="w-1/2 py-3 text-center font-semibold text-gray-500">Sign Up</button>
+                    <button id="loginTab" class="w-1/2 py-3 text-center text-sm sm:text-base font-semibold text-red-600 border-b-2 border-red-600">Log In</button>
+                    <button id="signUpTab" class="w-1/2 py-3 text-center text-sm sm:text-base font-semibold text-gray-500">Sign Up</button>
                 </div>
 
                 <form id="loginForm" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="loginEmail" class="mt-1 block w-full rounded-md bg-white border-black text-gray-900 shadow-sm focus:border-black focus:ring focus:ring-black focus:ring-opacity-50" required>
+                        <input type="email" id="loginEmail" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="loginPassword" class="mt-1 block w-full rounded-md bg-white border-black text-gray-900 shadow-sm focus:border-black focus:ring focus:ring-black focus:ring-opacity-50" required>
+                        <input type="password" id="loginPassword" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
                     </div>
                     <div class="text-right">
                         <button type="button" id="showResetBtn" class="text-sm text-red-600 hover:underline font-medium">Forgot Password?</button>
@@ -131,17 +365,21 @@
                 <form id="signUpForm" class="space-y-4 hidden">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="signUpEmail" class="mt-1 block w-full rounded-md bg-white border-black text-gray-900 shadow-sm focus:border-black focus:ring focus:ring-black focus:ring-opacity-50" required>
+                        <input type="email" id="signUpEmail" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Password</label>
-                        <input type="password" id="signUpPassword" class="mt-1 block w-full rounded-md bg-white border-black text-gray-900 shadow-sm focus:border-black focus:ring focus:ring-black focus:ring-opacity-50" required>
+                        <label class="block text-sm font-medium text-gray-700">Password (min. 6 characters)</label>
+                        <input type="password" id="signUpPassword" minlength="6" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
                     </div>
                     <p id="signUpError" class="text-red-500 text-sm hidden"></p>
                     <button type="submit" class="w-full px-6 py-3 bg-red-600 text-white font-bold rounded-full shadow-lg hover:bg-red-700 transition">Create Account</button>
                 </form>
                 
-                <div class="flex items-center my-6"><div class="flex-grow border-t border-gray-300"></div><span class="mx-4 text-sm font-medium text-gray-500">OR</span><div class="flex-grow border-t border-gray-300"></div></div>
+                <div class="flex items-center my-6">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="mx-4 text-sm font-medium text-gray-500">OR</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
 
                 <button id="googleSignInBtn" class="w-full flex items-center justify-center px-6 py-3 bg-white border border-gray-300 text-gray-700 font-semibold rounded-full shadow-sm hover:bg-gray-50 transition">
                     <svg class="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FBBC05" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#E34133" d="M43.611,20.083L43.595,20L42,20H24v8h11.303c-0.792,2.44-2.203,4.49-4.128,5.991l5.657,5.657C39.999,36.658,44,31.1,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#4285F4" d="M24,44c5.166,0,9.86-1.977,13.409-5.392l-5.657-5.657C30.062,35.053,27.218,36,24,36c-5.222,0-9.641-3.343-11.303-8H7.047v5.571C10.74,40.165,16.901,44,24,44z"></path><path fill="#34A853" d="M12.697,28.718C12.231,27.229,12,25.656,12,24s0.231-3.229,0.697-4.718V13.73H7.047C5.903,16.032,5,19.856,5,24s0.903,7.968,2.047,10.27H12.697V28.718z"></path></svg>
@@ -155,7 +393,7 @@
                 <form id="resetForm" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="resetEmail" class="mt-1 block w-full rounded-md bg-white border-black text-gray-900 shadow-sm focus:border-black focus:ring focus:ring-black focus:ring-opacity-50" required>
+                        <input type="email" id="resetEmail" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
                     </div>
                     <p id="resetMessage" class="text-green-600 text-sm hidden"></p>
                     <p id="resetError" class="text-red-500 text-sm hidden"></p>
@@ -163,33 +401,87 @@
                 </form>
                 <button type="button" id="showLoginFromReset" class="text-sm text-red-600 hover:underline font-medium text-center w-full mt-4">Back to Log In</button>
             </div>
-            </div>
+        </div>
     </div>
+
+    <div id="disclaimerModal" class="fixed inset-0 bg-gray-900 bg-opacity-90 z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-lg shadow-2xl p-6 sm:p-8 w-full max-w-2xl relative">
+            <div class="text-center mb-6">
+                <div class="text-5xl mb-4">⚠️</div>
+                <h2 class="text-2xl font-bold text-red-600 mb-2">IMPORTANT MEDICAL DISCLAIMER</h2>
+            </div>
+            
+            <div class="space-y-4 text-sm text-gray-700 max-h-96 overflow-y-auto">
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                    <p class="font-semibold text-yellow-800">This tool provides ESTIMATES ONLY and is NOT a substitute for professional medical advice, diagnosis, or treatment.</p>
+                </div>
+                
+                <div class="space-y-2">
+                    <p class="font-semibold text-gray-800">Please understand:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>This calculator is for educational purposes only</li>
+                        <li>Results are based on simplified algorithms, not clinical models</li>
+                        <li>NOT FDA approved or clinically validated</li>
+                        <li>Should NEVER be used for self-diagnosis</li>
+                        <li>Does not replace medical testing or professional assessment</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <p class="font-semibold text-gray-800">You should:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Always consult qualified healthcare professionals for medical advice</li>
+                        <li>Seek immediate medical attention for chest pain, shortness of breath, or other concerning symptoms</li>
+                        <li>Follow your doctor's recommendations over any information from this tool</li>
+                        <li>Get regular health screenings as recommended by your physician</li>
+                    </ul>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4">
+                    <p class="font-semibold text-red-800">By using this tool, you acknowledge that the creators bear no responsibility for any health decisions or outcomes based on its results.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                <button id="disclaimerDecline" class="px-6 py-3 bg-gray-300 text-gray-800 font-bold rounded-full hover:bg-gray-400 transition">
+                    I Do Not Agree
+                </button>
+                <button id="disclaimerAccept" class="px-6 py-3 bg-red-600 text-white font-bold rounded-full hover:bg-red-700 transition">
+                    I Understand & Agree
+                </button>
+            </div>
+        </div>
+    </div>
+
     <footer class="w-full bg-white shadow-inner mt-auto">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="flex flex-col md:flex-row justify-between items-center"><p class="text-sm text-gray-500">&copy; 2025 HeartHealth Project. For educational purposes only.</p><div class="flex space-x-6 mt-4 md:mt-0"><a href="#" class="text-sm text-gray-500 hover:text-red-600">Privacy Policy</a><a href="#" class="text-sm text-gray-500 hover:text-red-600">Terms of Use</a><a href="#" class="text-sm text-gray-500 hover:text-red-600">Contact</a></div></div></div>
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs sm:text-sm text-gray-500 text-center md:text-left">&copy; 2025 HeartHealth Project. For educational purposes only. Not medical advice.</p>
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-red-600">Privacy Policy</a>
+                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-red-600">Terms of Use</a>
+                    <a href="#" class="text-xs sm:text-sm text-gray-500 hover:text-red-600">Contact</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script>
-  // 1. PASTE YOUR FIREBASE CONFIG OBJECT HERE:
-  const firebaseConfig = {
-    apiKey: "AIzaSyA45vVVBhq0366UG-_j6m865jnzuTmDIqM",
-    authDomain: "heart-health-app-85a13.firebaseapp.com",
-    projectId: "heart-health-app-85a13",
-    storageBucket: "heart-health-app-85a13.firebasestorage.app",
-    messagingSenderId: "505759364463",
-    appId: "1:505759364463:web:f570c0eb5b62de8408249a",
-    measurementId: "G-34XJZ9E9QE"
-  };
+        // IMPORTANT: MOVE THESE TO ENVIRONMENT VARIABLES IN PRODUCTION
+        // For development only - DO NOT expose in production
+        const firebaseConfig = {
+            apiKey: "AIzaSyA45vVVBhq0366UG-_j6m865jnzuTmDIqM",
+            authDomain: "heart-health-app-85a13.firebaseapp.com",
+            projectId: "heart-health-app-85a13",
+            storageBucket: "heart-health-app-85a13.firebasestorage.app",
+            messagingSenderId: "505759364463",
+            appId: "1:505759364463:web:f570c0eb5b62de8408249a",
+            measurementId: "G-34XJZ9E9QE"
+        };
 
-  // 2. Provide the config to your script.js file
-  // Your script.js file looks for this exact variable.
-  window.__firebase_config = JSON.stringify(firebaseConfig);
-
-  // 3. Provide the app ID for your database path
-  // Your script saves data to: artifacts/[appId]/users/...
-  // We'll use your projectId, which is a good, unique name.
-  window.__app_id = firebaseConfig.projectId;
-</script>
-<script type="module" src="script.js"></script>
+        window.__firebase_config = JSON.stringify(firebaseConfig);
+        window.__app_id = firebaseConfig.projectId;
+    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
