@@ -26,8 +26,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 // === CONFIGURATION ===
-const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+// NOTE: We access the global window variables set in index.html before script.js is loaded.
+const firebaseConfig = window.__firebase_config ? JSON.parse(window.__firebase_config) : {};
+const appId = window.__app_id || 'default-app-id';
 let app, auth, db;
 
 // === STATE VARIABLES ===
@@ -755,13 +756,15 @@ async function handleFormSubmit(e) {
                 `;
             }
         });
-
-        if (breakdownHtml === '') {
-            breakdownHtml = '<p class="text-sm text-green-700">Congratulations! No significant risk factors were detected.</p>';
+        
+        // NOTE: The element breakdownListEl still exists in the DOM but is hidden via CSS class in index.html
+        if (breakdownListEl) {
+            if (breakdownHtml === '') {
+                breakdownHtml = '<p class="text-sm text-green-700">Congratulations! No significant risk factors were detected.</p>';
+            }
+            breakdownListEl.innerHTML = breakdownHtml;
         }
-        
-        breakdownListEl.innerHTML = breakdownHtml;
-        
+
         // Cap score
         totalScore = Math.max(0, Math.min(60, totalScore));
         
