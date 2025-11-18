@@ -9,7 +9,8 @@ import {
     signInWithPopup,
     signOut,
     sendPasswordResetEmail,
-    deleteUser
+    deleteUser,
+    updateProfile // ADDED
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { 
     getFirestore, 
@@ -32,6 +33,7 @@ let app, auth, db;
 // === STATE VARIABLES ===
 let currentUserId = null;
 let currentEmail = null;
+let currentDisplayName = null; // ADDED
 let hasAcceptedDisclaimer = localStorage.getItem('disclaimerAccepted') === 'true';
 let recordsLimit = 10;
 let allRecords = [];
@@ -260,7 +262,7 @@ const riskFactors = {
         
         if (highBp) {
             score += 8;
-            messages.push("Managing your high blood pressure is critical. Follow your doctor's advice carefully.");
+            messages.push("Managing your high blood pressure diagnosis is critical. Follow your doctor's advice carefully.");
         }
         
         if (diabetes) {
@@ -286,7 +288,52 @@ const riskFactors = {
             }
         }
         return { score: 0, message: null };
+    },
+
+    // === NEW RISK FUNCTIONS ===
+    calculateBPRisk(systolic, diastolic) {
+        if (!systolic && !diastolic) {
+            return { score: 0, message: null };
+        }
+
+        if (systolic > 180 || diastolic > 120) {
+            return { 
+                score: 10, 
+                message: "Your BP reading is in a hypertensive crisis range. Seek medical attention immediately." 
+            };
+        } else if (systolic >= 140 || diastolic >= 90) {
+            return { 
+                score: 7, 
+                message: "Your BP reading is high (Stage 2). It's crucial to discuss this with your doctor." 
+            };
+        } else if (systolic >= 130 || diastolic >= 80) {
+            return { 
+                score: 4, 
+                message: "Your BP reading is elevated (Stage 1). Monitor it closely and discuss with your doctor." 
+            };
+        }
+        return { score: 0, message: null };
+    },
+
+    calculateHeartRateRisk(hr) {
+        if (!hr) {
+            return { score: 0, message: null };
+        }
+
+        if (hr > 100) {
+            return { 
+                score: 4, 
+                message: "Your resting heart rate is high (tachycardia). This can be a sign of stress or an underlying condition." 
+            };
+        } else if (hr < 50) {
+            return { 
+                score: 2, 
+                message: "Your resting heart rate is very low. If you are not a trained athlete, discuss this with your doctor." 
+            };
+        }
+        return { score: 0, message: null };
     }
+    // === END OF NEW RISK FUNCTIONS ===
 };
 
 // === FIREBASE INITIALIZATION ===
@@ -297,11 +344,13 @@ if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
         auth = getAuth(app);
         db = getFirestore(app);
         
-        // Auth state listener
+        // === MODIFIED: Auth state listener ===
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserId = user.uid;
                 currentEmail = user.email || null;
+                currentDisplayName = user.displayName || null; // ADDED
+                const creationTime = user.metadata.creationTime; // ADDED
                 
                 // Update UI
                 navDashboard.classList.remove('hidden');
@@ -309,14 +358,25 @@ if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
                 showLoginBtn.classList.add('hidden');
                 signOutBtn.classList.remove('hidden');
                 
-                if (currentEmail) {
-                    userEmail.textContent = currentEmail;
-                    userEmail.classList.remove('hidden');
+                // MODIFIED: Update Greeting
+                if (currentDisplayName) {
+                    userGreeting.innerHTML = `Hi, <span class="font-bold">${sanitizeInput(currentDisplayName)}</span>!`;
+                    userGreeting.classList.remove('hidden');
+                } else if (currentEmail) {
+                    // Fallback to email if no display name
+                    userGreeting.textContent = sanitizeInput(currentEmail);
+                    userGreeting.classList.remove('hidden');
                 }
                 
-                // Update settings page
+                // MODIFIED: Update settings page
+                if (settingsName) settingsName.textContent = currentDisplayName || 'N/A';
                 if (settingsEmail) settingsEmail.textContent = currentEmail || 'N/A';
                 if (settingsUserId) settingsUserId.textContent = currentUserId || 'N/A';
+                if (settingsMemberSince && creationTime) {
+                    settingsMemberSince.textContent = new Date(creationTime).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                }
                 
                 authModal.classList.add('hidden');
                 showLoginView();
@@ -328,13 +388,20 @@ if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
             } else {
                 currentUserId = null;
                 currentEmail = null;
+                currentDisplayName = null; // ADDED
                 
                 // Update UI
                 navDashboard.classList.add('hidden');
                 navSettings.classList.add('hidden');
                 showLoginBtn.classList.remove('hidden');
                 signOutBtn.classList.add('hidden');
-                userEmail.classList.add('hidden');
+                userGreeting.classList.add('hidden'); // MODIFIED
+                
+                // MODIFIED: Reset settings page
+                if (settingsName) settingsName.textContent = 'Not logged in';
+                if (settingsEmail) settingsEmail.textContent = 'N/A';
+                if (settingsUserId) settingsUserId.textContent = 'N/A';
+                if (settingsMemberSince) settingsMemberSince.textContent = 'N/A';
                 
                 recordsContainer.innerHTML = '<p class="text-sm text-gray-500">Please log in to view your dashboard.</p>';
                 showCalculatorView();
@@ -367,6 +434,9 @@ const clearFormBtn = document.getElementById('clearFormBtn');
 const submitBtn = document.getElementById('submitBtn');
 const formProgress = document.getElementById('formProgress');
 
+// === NEW: Breakdown Element ===
+const breakdownListEl = document.getElementById('breakdownList');
+
 // Navigation
 const navCalculator = document.getElementById('navCalculator');
 const navDashboard = document.getElementById('navDashboard');
@@ -385,7 +455,7 @@ const authModal = document.getElementById('authModal');
 const closeModalBtn = document.getElementById('closeModalBtn');
 const showLoginBtn = document.getElementById('showLoginBtn');
 const signOutBtn = document.getElementById('signOutBtn');
-const userEmail = document.getElementById('userEmail');
+const userGreeting = document.getElementById('userGreeting'); // MODIFIED
 const authContent = document.getElementById('authContent');
 const resetContent = document.getElementById('resetContent');
 const loginTab = document.getElementById('loginTab');
@@ -407,8 +477,10 @@ const loadDraftBtn = document.getElementById('loadDraftBtn');
 const dismissDraftBtn = document.getElementById('dismissDraftBtn');
 
 // Settings elements
+const settingsName = document.getElementById('settingsName'); // ADDED
 const settingsEmail = document.getElementById('settingsEmail');
 const settingsUserId = document.getElementById('settingsUserId');
+const settingsMemberSince = document.getElementById('settingsMemberSince'); // ADDED
 const exportDataBtn = document.getElementById('exportDataBtn');
 const exportAllDataBtn = document.getElementById('exportAllDataBtn');
 const deleteAllRecordsBtn = document.getElementById('deleteAllRecordsBtn');
@@ -627,32 +699,68 @@ async function handleFormSubmit(e) {
             parseFloat(document.getElementById('rbc').value) : null;
         const wbc = document.getElementById('wbc').value ? 
             parseFloat(document.getElementById('wbc').value) : null;
+
+        // === NEW: Get BP and HR values ===
+        const systolicBp = document.getElementById('systolicBp').value ? 
+            parseInt(document.getElementById('systolicBp').value) : null;
+        const diastolicBp = document.getElementById('diastolicBp').value ? 
+            parseInt(document.getElementById('diastolicBp').value) : null;
+        const heartRate = document.getElementById('heartRate').value ? 
+            parseInt(document.getElementById('heartRate').value) : null;
         
-        // Calculate risk using modular functions
+        // === UPDATED: Calculate risk using an object to store breakdown ===
         let totalScore = 0;
         let precautions = [];
+        let breakdownHtml = '';
         
-        const risks = [
-            riskFactors.calculateAgeRisk(age),
-            riskFactors.calculateBMIRisk(bmi, gender),
-            riskFactors.calculateWaistRisk(waist, gender),
-            riskFactors.calculateSmokingRisk(smoking),
-            riskFactors.calculateExerciseRisk(exercise, steps),
-            riskFactors.calculateDietRisk(junkFood),
-            riskFactors.calculateAlcoholRisk(alcohol, gender),
-            riskFactors.calculateSleepRisk(sleep),
-            riskFactors.calculateStressRisk(stress),
-            riskFactors.calculateFamilyHistoryRisk(familyHistory),
-            riskFactors.calculateMedicalConditionRisk(highBp, diabetes),
-            riskFactors.calculateCholesterolRisk(cholesterol)
-        ];
+        const riskResults = {
+            'Age': riskFactors.calculateAgeRisk(age),
+            'BMI': riskFactors.calculateBMIRisk(bmi, gender),
+            'Waist': riskFactors.calculateWaistRisk(waist, gender),
+            'Smoking': riskFactors.calculateSmokingRisk(smoking),
+            'Activity': riskFactors.calculateExerciseRisk(exercise, steps),
+            'Diet': riskFactors.calculateDietRisk(junkFood),
+            'Alcohol': riskFactors.calculateAlcoholRisk(alcohol, gender),
+            'Sleep': riskFactors.calculateSleepRisk(sleep),
+            'Stress': riskFactors.calculateStressRisk(stress),
+            'Family History': riskFactors.calculateFamilyHistoryRisk(familyHistory),
+            'Medical Conditions': riskFactors.calculateMedicalConditionRisk(highBp, diabetes),
+            'Cholesterol': riskFactors.calculateCholesterolRisk(cholesterol),
+            'BP Reading': riskFactors.calculateBPRisk(systolicBp, diastolicBp),
+            'Heart Rate': riskFactors.calculateHeartRateRisk(heartRate)
+        };
         
-        risks.forEach(risk => {
-            totalScore += risk.score;
-            if (risk.message) {
-                precautions.push(risk.message);
+        // Sort by score (highest risk first) for the breakdown
+        const sortedRisks = Object.entries(riskResults)
+            .sort((a, b) => b[1].score - a[1].score);
+
+        sortedRisks.forEach(([factorName, result]) => {
+            totalScore += result.score;
+            if (result.message) {
+                precautions.push(result.message);
+            }
+            if (result.score > 0) {
+                // Max score for visualization bar is capped at 10 for simplicity
+                const barPercent = Math.min(100, (result.score / 10) * 100);
+                breakdownHtml += `
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">${factorName}</span>
+                        <div class="flex items-center">
+                            <span class="text-sm font-bold text-red-600 mr-2" style="min-width: 50px; text-align: right;">+${result.score} pts</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-red-500 h-2.5 rounded-full" style="width: ${barPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         });
+
+        if (breakdownHtml === '') {
+            breakdownHtml = '<p class="text-sm text-green-700">Congratulations! No significant risk factors were detected.</p>';
+        }
+        
+        breakdownListEl.innerHTML = breakdownHtml;
         
         // Cap score
         totalScore = Math.max(0, Math.min(60, totalScore));
@@ -687,7 +795,7 @@ async function handleFormSubmit(e) {
         }
         
         riskLevelEl.textContent = level;
-        riskLevelEl.className = `text-xl font-extrabold ${levelColor}`;
+        riskLevelEl.className = `text-lg sm:text-xl font-extrabold ${levelColor}`;
         riskMessageEl.textContent = `Your calculated BMI is ${bmi.toFixed(1)}. Based on your inputs, your risk level is ${level}.`;
         
         // Simulate AI prediction
@@ -704,7 +812,7 @@ async function handleFormSubmit(e) {
         
         precautionsList.innerHTML = precautions.map(p => `<li>${sanitizeInput(p)}</li>`).join('');
         
-        // Save data
+        // === UPDATED: Save data ===
         const dataToSave = {
             name,
             age, gender, weight, heightCm, waist,
@@ -712,6 +820,7 @@ async function handleFormSubmit(e) {
             steps, junkFood, exercise, alcohol, smoking, sleep, stress,
             familyHistory, highBp, diabetes,
             cholesterol, rbc, wbc,
+            systolicBp, diastolicBp, heartRate, // <-- NEW FIELDS ADDED
             score: totalScore,
             level,
             timestamp: new Date().toISOString()
@@ -859,6 +968,7 @@ function renderRecords(records) {
         if (record.level === 'Moderate') levelColor = 'text-yellow-600';
         if (record.level === 'Low') levelColor = 'text-green-600';
         
+        // === UPDATED: Show new data in dashboard cards ===
         recordsHtml += `
             <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
                 <div class="flex justify-between items-center mb-2">
@@ -871,14 +981,14 @@ function renderRecords(records) {
                     <p><span class="text-gray-500">BMI:</span> 
                         <span class="font-semibold">${record.bmi}</span>
                     </p>
+                    <p><span class="text-gray-500">BP:</span> 
+                        <span class="font-semibold">${record.systolicBp || 'N/A'}/${record.diastolicBp || 'N/A'}</span>
+                    </p>
+                    <p><span class="text-gray-500">HR:</span> 
+                        <span class="font-semibold">${record.heartRate || 'N/A'} bpm</span>
+                    </p>
                     <p><span class="text-gray-500">Steps:</span> 
                         <span class="font-semibold">${record.steps}</span>
-                    </p>
-                    <p><span class="text-gray-500">Exercise:</span> 
-                        <span class="font-semibold">${record.exercise}h</span>
-                    </p>
-                    <p><span class="text-gray-500">Smoking:</span> 
-                        <span class="font-semibold">${record.smoking === 1 ? 'Yes' : 'No'}</span>
                     </p>
                 </div>
             </div>
@@ -925,6 +1035,7 @@ async function exportHealthData() {
         const exportData = {
             exportDate: new Date().toISOString(),
             userEmail: currentEmail,
+            userName: currentDisplayName, // ADDED
             userId: currentUserId,
             recordCount: records.length,
             records: records
@@ -1037,12 +1148,21 @@ async function deleteUserAccount() {
 
 // === AUTH HANDLERS ===
 
+// === MODIFIED: handleSignUp ===
 async function handleSignUp(e) {
     e.preventDefault();
+    const name = document.getElementById('signUpName').value; // ADDED
     const email = document.getElementById('signUpEmail').value;
     const password = document.getElementById('signUpPassword').value;
     
     signUpError.classList.add('hidden');
+    
+    // ADDED: Name validation
+    if (!name || name.trim() === '') {
+        signUpError.textContent = 'Please enter your full name.';
+        signUpError.classList.remove('hidden');
+        return;
+    }
     
     if (password.length < 6) {
         signUpError.textContent = 'Password must be at least 6 characters long.';
@@ -1051,8 +1171,18 @@ async function handleSignUp(e) {
     }
     
     try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        // Auth state listener will handle UI updates
+        // 1. Create the user
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // 2. ADDED: Update the user's profile with their name
+        await updateProfile(userCredential.user, {
+            displayName: name
+        });
+        
+        // 3. Manually update local state to reflect change immediately
+        currentDisplayName = name;
+        
+        // Auth state listener will handle the rest of the UI updates
     } catch (error) {
         console.error("Sign up error:", error);
         let errorMessage = error.message;
@@ -1107,7 +1237,7 @@ async function handleGoogleSignIn() {
     
     try {
         await signInWithPopup(auth, provider);
-        // Auth state listener will handle UI updates
+        // Auth state listener will handle UI updates, including display name
     } catch (error) {
         console.error("Google sign in error:", error);
         let errorMessage = error.message;
@@ -1169,3 +1299,144 @@ async function handlePasswordReset(e) {
         resetError.classList.remove('hidden');
     }
 }
+// script.js (popup + form handling)
+// If you have additional site logic in another script, merge carefully.
+// This script is written to be self-contained and safe to include as module.
+
+(function() {
+  // Helper: easy DOM ready
+  function ready(fn) {
+    if (document.readyState !== 'loading') {
+      fn();
+    } else {
+      document.addEventListener('DOMContentLoaded', fn);
+    }
+  }
+
+  ready(() => {
+    const consultBtn = document.getElementById('consultDoctorBtn');
+    const popup = document.getElementById('doctorPopup');
+    const closeBtn = document.getElementById('closeDoctorPopup');
+    const doctorForm = document.getElementById('doctorForm');
+    const successMsg = document.getElementById('doctorSuccessMsg');
+
+    if (!consultBtn || !popup || !closeBtn || !doctorForm || !successMsg) {
+      // required elements not present — nothing to do
+      return;
+    }
+
+    // Focus management
+    let lastFocused = null;
+
+    function openPopup() {
+      lastFocused = document.activeElement;
+      popup.classList.remove('hidden');
+      // focus first input after a tick
+      setTimeout(() => {
+        const firstInput = popup.querySelector('input, button, [tabindex]:not([tabindex="-1"])');
+        if (firstInput) firstInput.focus();
+      }, 50);
+      document.body.style.overflow = 'hidden'; // prevent background scroll
+    }
+
+    function closePopup() {
+      popup.classList.add('hidden');
+      successMsg.classList.add('hidden');
+      doctorForm.classList.remove('hidden');
+      doctorForm.reset();
+      document.body.style.overflow = ''; // restore scroll
+      // restore focus
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    // Open on click
+    consultBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openPopup();
+    });
+
+    // Close btn
+    closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closePopup();
+    });
+
+    // Close when clicking outside the dialog content
+    popup.addEventListener('click', (e) => {
+      // if click target is the overlay (popup itself), close
+      if (e.target === popup) {
+        closePopup();
+      }
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !popup.classList.contains('hidden')) {
+        closePopup();
+      }
+    });
+
+    // Submit handling
+    doctorForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Basic validation (browser already validates required/email)
+      const name = document.getElementById('docName');
+      const email = document.getElementById('docEmail');
+      const phone = document.getElementById('docPhone');
+
+      if (!name || !email || !phone) return;
+
+      if (!name.value.trim()) {
+        name.focus();
+        return;
+      }
+      if (!email.checkValidity()) {
+        email.focus();
+        return;
+      }
+      if (!phone.value.trim()) {
+        phone.focus();
+        return;
+      }
+
+      // Simulate form send: hide form and show success message
+      doctorForm.classList.add('hidden');
+      successMsg.classList.remove('hidden');
+
+      // Optionally: here you could send data to your backend or an email service.
+      // Example (commented):
+      // fetch('/api/contact-doctor', { method:'POST', body: JSON.stringify({name: name.value, email: email.value, phone: phone.value}), headers:{'Content-Type':'application/json'} })
+
+      // Auto-close after 2 seconds
+      setTimeout(() => {
+        closePopup();
+      }, 2000);
+    });
+
+    // Optional: trap focus inside popup while open for keyboard users
+    popup.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      const focusable = popup.querySelectorAll('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        // shift + tab
+        if (document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        }
+      } else {
+        // tab
+        if (document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
+        }
+      }
+    });
+
+  }); // ready
+})();

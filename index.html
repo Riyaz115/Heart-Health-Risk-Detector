@@ -18,15 +18,15 @@
             </div>
             
             <div class="flex items-center space-x-2 sm:space-x-4 order-2 sm:order-3">
-                <span id="userEmail" class="text-xs sm:text-sm text-gray-600 hidden truncate max-w-[120px] sm:max-w-none"></span>
+                <span id="userGreeting" class="text-xl sm:text-sm text-gray-600 hidden truncate max-w-[120px] sm:max-w-none"></span>
                 <button id="showLoginBtn" class="px-3 sm:px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-full hover:bg-red-700">Login / Sign Up</button>
-                <button id="signOutBtn" class="text-xs sm:text-sm text-gray-500 hover:text-red-600 font-medium hidden">Sign Out</button>
+                <button id="signOutBtn" class="text-xl sm:text-sm text-gray-500 hover:text-red-600 font-medium hidden">Sign Out</button>
             </div>
 
             <div class="flex justify-center space-x-4 sm:space-x-8 order-3 sm:order-2 w-full sm:w-auto mt-3 sm:mt-0">
-                <button id="navCalculator" class="text-red-600 font-bold text-sm sm:text-base">Calculator</button>
-                <button id="navDashboard" class="text-gray-500 hover:text-red-600 font-bold hidden text-sm sm:text-base">Dashboard</button>
-                <button id="navSettings" class="text-gray-500 hover:text-red-600 font-bold hidden text-sm sm:text-base">Settings</button>
+                <button id="navCalculator" class="text-red-600 font-bold text-xl sm:text-base">Calculator</button>
+                <button id="navDashboard" class="text-gray-500 hover:text-red-600 font-bold hidden text-xl sm:text-base">Dashboard</button>
+                <button id="navSettings" class="text-gray-500 hover:text-red-600 font-bold hidden text-xl sm:text-base">Settings</button>
             </div>
         </div>
     </nav>
@@ -39,11 +39,6 @@
         
         <div id="formContainer" class="container mx-auto bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 my-6 sm:my-12">
             
-            <!-- <header class="text-center relative">
-                <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-red-600 mb-2">Heart Health Risk Detector</h1>
-                <p class="text-xs sm:text-sm text-gray-500 mt-2">Educational tool - Not for medical diagnosis</p>
-            </header> -->
-
             <div id="draftNotification" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
                     <span class="text-blue-600">💾</span>
@@ -62,15 +57,15 @@
                         <div class="space-y-4">
                             <label class="block">
                                 <span class="text-gray-700 text-sm">Name</span>
-                                <input type="text" id="name"
+                                <input type="text" id="name" name="name"
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required
                                     oninvalid="this.setCustomValidity('Please enter your name')"
                                     oninput="this.setCustomValidity('')">
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Age (years)</span>
-                                <input type="number" id="age" min="1" max="120" 
+                                <span class="text-gray-700 text-sm">Age (years) <span class="text-gray-500 font-normal">(1-120)</span></span>
+                                <input type="number" id="age" name="age" min="1" max="120" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required
                                     oninvalid="this.setCustomValidity('Please enter age between 1-120')"
@@ -78,30 +73,30 @@
                             </label>
                             <label class="block">
                                 <span class="text-gray-700 text-sm">Gender</span>
-                                <select id="gender" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                <select id="gender" name="gender" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Weight (kg)</span>
-                                <input type="number" id="weight" min="1" max="500" step="0.1"
+                                <span class="text-gray-700 text-sm">Weight (kg) <span class="text-gray-500 font-normal">(1-500)</span></span>
+                                <input type="number" id="weight" name="weight" min="1" max="500" step="0.1"
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required
                                     oninvalid="this.setCustomValidity('Please enter weight between 1-500 kg')"
                                     oninput="this.setCustomValidity('')">
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Height (cm)</span>
-                                <input type="number" id="height" min="100" max="250" 
+                                <span class="text-gray-700 text-sm">Height (cm) <span class="text-gray-500 font-normal">(100-250)</span></span>
+                                <input type="number" id="height" name="height" min="100" max="250" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required
                                     oninvalid="this.setCustomValidity('Please enter height between 100-250 cm')"
                                     oninput="this.setCustomValidity('')">
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Waist Circumference (cm)</span>
-                                <input type="number" id="waist" min="1" max="200" 
+                                <span class="text-gray-700 text-sm">Waist Circumference (cm) <span class="text-gray-500 font-normal">(1-200)</span></span>
+                                <input type="number" id="waist" name="waist" min="1" max="200" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required
                                     oninvalid="this.setCustomValidity('Please enter waist circumference between 1-200 cm')"
@@ -109,7 +104,7 @@
                             </label>
                             <label class="block">
                                 <span class="text-gray-700 text-sm">Socio-economic Status</span>
-                                <select id="socioEconomicStatus" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                <select id="socioEconomicStatus" name="socioEconomicStatus" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                                     <option value="High">High</option>
                                     <option value="Medium" selected>Medium</option>
                                     <option value="Low">Low</option>
@@ -121,45 +116,45 @@
                         <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Lifestyle Habits</h2>
                         <div class="space-y-4">
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Daily Steps (average)</span>
-                                <input type="number" id="steps" min="0" max="50000" 
+                                <span class="text-gray-700 text-sm">Daily Steps (average) <span class="text-gray-500 font-normal">(0-50000)</span></span>
+                                <input type="number" id="steps" name="steps" min="0" max="50000" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required>
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Junk Food (times/week)</span>
-                                <input type="number" id="junkFood" min="0" max="50" 
+                                <span class="text-gray-700 text-sm">Junk Food (times/week) <span class="text-gray-500 font-normal">(0-50)</span></span>
+                                <input type="number" id="junkFood" name="junkFood" min="0" max="50" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required>
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Exercise (hours/week)</span>
-                                <input type="number" id="exercise" min="0" max="40" step="0.5" 
+                                <span class="text-gray-700 text-sm">Exercise (hours/week) <span class="text-gray-500 font-normal">(0-40)</span></span>
+                                <input type="number" id="exercise" name="exercise" min="0" max="40" step="0.5" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required>
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Alcohol (drinks/week)</span>
-                                <input type="number" id="alcohol" min="0" max="50" 
+                                <span class="text-gray-700 text-sm">Alcohol (drinks/week) <span class="text-gray-500 font-normal">(0-50)</span></span>
+                                <input type="number" id="alcohol" name="alcohol" min="0" max="50" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required>
                             </label>
                             <label class="block">
                                 <span class="text-gray-700 text-sm">Daily Smoking Habits</span>
-                                <select id="smoking" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                <select id="smoking" name="smoking" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                                     <option value="0">No</option>
                                     <option value="1">Yes</option>
                                 </select>
                             </label>
                             <label class="block">
-                                <span class="text-gray-700 text-sm">Daily Sleep (avg. hours)</span>
-                                <input type="number" id="sleep" min="0" max="16" step="0.5" 
+                                <span class="text-gray-700 text-sm">Daily Sleep (avg. hours) <span class="text-gray-500 font-normal">(0-16)</span></span>
+                                <input type="number" id="sleep" name="sleep" min="0" max="16" step="0.5" 
                                     class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" 
                                     required>
                             </label>
                             <label class="block">
                                 <span class="text-gray-700 text-sm">Stress Level</span>
-                                <select id="stress" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                                <select id="stress" name="stress" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                                     <option value="1">Low</option>
                                     <option value="2">Medium</option>
                                     <option value="3">High</option>
@@ -173,22 +168,44 @@
                     <div class="space-y-4">
                         <label class="block">
                             <span class="text-gray-700 text-sm">Family Medical History of Heart Disease?</span>
-                            <select id="familyHistory" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                            <select id="familyHistory" name="familyHistory" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                                 <option value="0">No</option>
                                 <option value="1">Yes</option>
                             </select>
                         </label>
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" id="highBp" class="rounded text-red-600">
-                            <span class="text-gray-700 text-sm">High Blood Pressure</span>
+
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Systolic Blood Pressure (mmHg) <span class="text-gray-500 font-normal">(50-300)</span>
+                                <span class="tooltip text-gray-500 cursor-help" title="The top number in your BP reading">ℹ️</span>
+                            </span>
+                            <input type="number" id="systolicBp" name="systolicBp" min="50" max="300" 
+                                class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Diastolic Blood Pressure (mmHg) <span class="text-gray-500 font-normal">(30-200)</span>
+                                <span class="tooltip text-gray-500 cursor-help" title="The bottom number in your BP reading">ℹ️</span>
+                            </span>
+                            <input type="number" id="diastolicBp" name="diastolicBp" min="30" max="200" 
+                                class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700 text-sm">Resting Heart Rate (bpm) <span class="text-gray-500 font-normal">(30-200)</span>
+                                <span class="tooltip text-gray-500 cursor-help" title="Your heart rate when at rest">ℹ️</span>
+                            </span>
+                            <input type="number" id="heartRate" name="heartRate" min="30" max="200" 
+                                class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                         </label>
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" id="diabetes" class="rounded text-red-600">
+                            <input type="checkbox" id="highBp" name="highBp" class="rounded text-red-600">
+                            <span class="text-gray-700 text-sm">High Blood Pressure (Known Diagnosis)</span>
+                        </label>
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="diabetes" name="diabetes" class="rounded text-red-600">
                             <span class="text-gray-700 text-sm">Diabetes</span>
                         </label>
                         <label class="block">
                             <span class="text-gray-700 text-sm">Any Existing Medical Conditions (e.g., Asthma, Thyroid)</span>
-                            <textarea id="conditions" rows="2" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm"></textarea>
+                            <textarea id="conditions" name="conditions" rows="2" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm"></textarea>
                         </label>
                     </div>
                 </div>
@@ -200,28 +217,29 @@
                     <div class="space-y-4">
                         <p class="text-xs sm:text-sm text-gray-500">Provide these for a more accurate score.</p>
                         <label class="block">
-                            <span class="text-gray-700 text-sm">Total Cholesterol (mg/dL)</span>
-                            <input type="number" id="cholesterol" min="0" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                            <span class="text-gray-700 text-sm">Total Cholesterol (mg/dL) <span class="text-gray-500 font-normal">(0-500)</span></span>
+                            <input type="number" id="cholesterol" name="cholesterol" min="0" max="500" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                         </label>
                         <label class="block">
                             <span class="text-gray-700 text-sm">
-                                RBC Count (millions/µL)
+                                RBC Count (millions/µL) <span class="text-gray-500 font-normal">(0-10)</span>
                                 <span class="tooltip text-gray-500 cursor-help" title="Red Blood Cell count measures oxygen-carrying capacity">ℹ️</span>
                             </span>
-                            <input type="number" id="rbc" min="0" max="10" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                            <input type="number" id="rbc" name="rbc" min="0" max="10" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                         </label>
                         <label class="block">
                             <span class="text-gray-700 text-sm">
-                                WBC Count (thousands/µL)
+                                WBC Count (thousands/µL) <span class="text-gray-500 font-normal">(0-100)</span>
                                 <span class="tooltip text-gray-500 cursor-help" title="White Blood Cell count indicates immune system health">ℹ️</span>
                             </span>
-                            <input type="number" id="wbc" min="0" max="100" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
+                            <input type="number" id="wbc" name="wbc" min="0" max="100" step="0.1" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm">
                         </label>
                     </div>
                 </div>
                 <div class="md:col-span-2 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
                     <button type="button" id="clearFormBtn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-800 text-sm font-bold rounded-full shadow-md hover:bg-gray-300 transition">Clear All Inputs</button>
                     <button type="submit" id="submitBtn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-red-600 text-white text-sm font-bold rounded-full shadow-lg hover:bg-red-700 transition transform hover:scale-105">Calculate Heart Health Score</button>
+
                 </div>
             </form>
 
@@ -230,12 +248,12 @@
                     <h2 class="text-xl sm:text-2xl font-bold text-red-700">Your Heart Health Score</h2>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="meter-container mb-4 w-full">
+                    <div class="meter-container mb-4 w-full max-w-[400px] mx-auto">
                         <div id="meterFill" class="meter-fill" style="width: 0%;"></div>
                         <div class="meter-threshold" style="left: 33.3%;"></div>
                         <div class="meter-threshold" style="left: 66.6%;"></div>
                     </div>
-                    <div class="relative w-full flex justify-between text-xs font-bold -mt-2 text-gray-600 px-2">
+                    <div class="relative w-full max-w-[400px] flex justify-between text-xs font-bold -mt-2 text-gray-600 px-2 mx-auto">
                         <span>Low</span>
                         <span>Moderate</span>
                         <span>High</span>
@@ -246,6 +264,15 @@
                         <p class="text-xs sm:text-sm text-gray-600" id="riskMessage"></p>
                     </div>
                 </div>
+
+                <!-- HIDDEN: Risk Breakdown (kept in DOM so it can be shown later via JS) -->
+                <div id="riskBreakdown" class="mt-6 sm:mt-8 hidden">
+                    <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-2">Risk Factor Breakdown</h3>
+                    <p class="text-xs text-gray-500 mb-3">This shows which factors are contributing to your score.</p>
+                    <div id="breakdownList" class="space-y-2">
+                    </div>
+                </div>
+
                 <div id="aiResult" class="mt-6 sm:mt-8 p-4 bg-red-100 rounded-lg shadow-inner">
                     <h3 class="text-base sm:text-lg font-bold text-gray-800 text-center mb-2">AI 10-Year Risk Prediction</h3>
                     <p id="aiPrediction" class="text-center text-red-700 font-extrabold text-xl sm:text-2xl">Analyzing...</p>
@@ -257,6 +284,16 @@
                         <li>Loading recommendations...</li>
                     </ul>
                 </div>
+
+                <!-- CONSULT A DOCTOR BUTTON (NEW) -->
+                <div class="mt-6 flex justify-center">
+                    <button 
+                        id="consultDoctorBtn" 
+                        class="px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition">
+                        Consult a Doctor
+                    </button>
+                </div>
+
             </div>
         </div>
 
@@ -291,8 +328,10 @@
                 <div class="bg-gray-50 p-4 sm:p-6 rounded-lg">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">Account Information</h3>
                     <div class="space-y-2 text-sm">
-                        <p><span class="font-semibold">Email:</span> <span id="settingsEmail" class="text-gray-600">Not logged in</span></p>
+                        <p><span class="font-semibold">Name:</span> <span id="settingsName" class="text-gray-600">Not logged in</span></p>
+                        <p><span class="font-semibold">Email:</span> <span id="settingsEmail" class="text-gray-600">N/A</span></p>
                         <p><span class="font-semibold">User ID:</span> <span id="settingsUserId" class="text-gray-600 text-xs">N/A</span></p>
+                        <p><span class="font-semibold">Member Since:</span> <span id="settingsMemberSince" class="text-gray-600">N/A</span></p>
                     </div>
                 </div>
 
@@ -336,6 +375,55 @@
         </section>
     </main>
 
+    <!-- Doctor Consult Popup (Tailwind-styled) -->
+    <div id="doctorPopup" class="fixed inset-0 bg-gray-900 bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+      <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md relative animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="doctorPopupTitle">
+
+        <button id="closeDoctorPopup" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-3xl" aria-label="Close">&times;</button>
+
+        <h2 id="doctorPopupTitle" class="text-2xl font-extrabold text-blue-600 text-center mb-2">
+          Consult a Doctor
+        </h2>
+
+        <p class="text-gray-600 text-center text-sm mb-4">
+          Enter your details and a doctor will contact you shortly.
+        </p>
+
+        <form id="doctorForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" id="docName" required
+              class="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              autocomplete="name">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="docEmail" required
+              class="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              autocomplete="email">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input type="tel" id="docPhone" required
+              class="mt-1 w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              autocomplete="tel">
+          </div>
+
+          <button type="submit"
+            class="w-full bg-blue-600 text-white font-bold py-3 rounded-full shadow-lg hover:bg-blue-700 transition transform hover:scale-105">
+            Submit
+          </button>
+        </form>
+
+        <div id="doctorSuccessMsg" class="hidden text-center mt-6" role="status" aria-live="polite">
+          <p class="text-green-600 font-bold text-lg">✔ Doctor will contact you soon!</p>
+        </div>
+
+      </div>
+    </div>
+
     <div id="authModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-md relative">
             <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
@@ -363,6 +451,10 @@
                 </form>
 
                 <form id="signUpForm" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="signUpName" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Email</label>
                         <input type="email" id="signUpEmail" class="mt-1 block w-full rounded-md bg-white border-gray-300 text-gray-900 shadow-sm" required>
@@ -482,6 +574,8 @@
         window.__firebase_config = JSON.stringify(firebaseConfig);
         window.__app_id = firebaseConfig.projectId;
     </script>
+
+    <!-- External script (contains the popup logic below) -->
     <script type="module" src="script.js"></script>
 </body>
 </html>

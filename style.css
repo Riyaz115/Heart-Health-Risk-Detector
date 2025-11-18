@@ -274,3 +274,21 @@ button:active {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
 }
+/* ---------------------------
+   Popup animation helper
+   --------------------------- */
+.animate-fadeIn {
+    animation: fadeIn 0.36s ease-out;
+}
+
+/* Make focus visible for keyboard users (accessible) */
+:focus-visible {
+    outline: 3px solid rgba(59,130,246,0.45);
+    outline-offset: 2px;
+}
+
+/* Slight improvement to popup inner spacing on very small screens */
+#doctorPopup > div {
+    max-height: 92vh;
+    overflow-y: auto;
+}
