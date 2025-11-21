@@ -38,6 +38,7 @@ let currentDisplayName = null; // ADDED
 let hasAcceptedDisclaimer = localStorage.getItem('disclaimerAccepted') === 'true';
 let recordsLimit = 10;
 let allRecords = [];
+let healthChartInstance = null; // To track the chart object
 
 // === UTILITY FUNCTIONS ===
 
@@ -68,6 +69,173 @@ function validateNumericInput(value, min, max, fieldName) {
         throw new Error(`${fieldName} must be between ${min} and ${max}`);
     }
     return num;
+}
+
+// === IMPROVED CHART FUNCTION ===
+function renderChart(records) {
+    const ctx = document.getElementById('healthTrendChart').getContext('2d');
+    const chartContainer = document.getElementById('chartContainer');
+
+    // We need at least 2 records to show a trend line effectively
+    if (records.length < 2) {
+        chartContainer.classList.add('hidden');
+        return;
+    }
+
+    chartContainer.classList.remove('hidden');
+
+    // 1. Prepare Data
+    const sortedRecords = [...records].reverse();
+
+    const labels = sortedRecords.map(r => {
+        // Format date as "Nov 12"
+        const dateObj = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.timestamp);
+        return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    });
+
+    const scoreData = sortedRecords.map(r => r.score);
+    
+    // Create threshold arrays (constant lines for visual reference)
+    const highRiskThreshold = new Array(labels.length).fill(40);
+    const moderateRiskThreshold = new Array(labels.length).fill(20);
+
+    // 3. Dynamic Point Colors
+    // Map scores to specific colors for each point
+    const pointColors = scoreData.map(score => {
+        if (score >= 40) return '#dc2626'; // Red (High Risk)
+        if (score >= 20) return '#ca8a04'; // Dark Yellow (Moderate Risk)
+        return '#16a34a'; // Green (Low Risk)
+    });
+
+    // 2. Destroy previous chart instance
+    if (healthChartInstance) {
+        healthChartInstance.destroy();
+    }
+
+    // 4. Create Beautiful Gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(220, 38, 38, 0.5)'); // Red at top
+    gradient.addColorStop(0.5, 'rgba(220, 38, 38, 0.1)'); 
+    gradient.addColorStop(1, 'rgba(220, 38, 38, 0.0)'); // Transparent at bottom
+
+    // 5. Initialize Chart with Improvements
+    healthChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Your Risk Score',
+                    data: scoreData,
+                    borderColor: '#dc2626', // Red-600
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: pointColors, // Dynamic colors applied here
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    fill: true,
+                    tension: 0.4, // Smoother curve
+                    order: 1
+                },
+                // Visual Guide Lines (Thresholds)
+                {
+                    label: 'High Risk Threshold (40)',
+                    data: highRiskThreshold,
+                    borderColor: 'rgba(239, 68, 68, 0.5)', // Light Red
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    order: 2,
+                    tooltip: { enabled: false } // Don't show in hover
+                },
+                {
+                    label: 'Moderate Risk Threshold (20)',
+                    data: moderateRiskThreshold,
+                    borderColor: 'rgba(234, 179, 8, 0.6)', // Yellow
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    fill: false,
+                    order: 3,
+                    tooltip: { enabled: false }
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        // Hide threshold lines from legend to keep it clean
+                        filter: function(item, chart) {
+                            return !item.text.includes('Threshold');
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    titleColor: '#111827',
+                    bodyColor: '#374151',
+                    borderColor: '#e5e7eb',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true,
+                    callbacks: {
+                        // Add custom text based on score
+                        afterLabel: function(context) {
+                            if (context.dataset.label === 'Your Risk Score') {
+                                const score = context.parsed.y;
+                                if (score >= 40) return '⚠️ High Risk Zone';
+                                if (score >= 20) return '⚠️ Moderate Risk Zone';
+                                return '✅ Low Risk Zone';
+                            }
+                        },
+                        labelColor: function(context) {
+                            // Match tooltip color to point color
+                            const score = context.parsed.y;
+                            let color = '#16a34a';
+                            if (score >= 40) color = '#dc2626';
+                            else if (score >= 20) color = '#ca8a04';
+                            
+                            return {
+                                borderColor: color,
+                                backgroundColor: color,
+                                borderWidth: 2,
+                                borderRadius: 2,
+                            };
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 60,
+                    grid: {
+                        color: '#f3f4f6'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Risk Score (0-60)',
+                        font: { size: 12, weight: 'bold' }
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
 }
 
 // === DRAFT MANAGEMENT ===
@@ -900,6 +1068,9 @@ async function loadHealthDashboard() {
         } else {
             trendSummary.classList.add('hidden');
         }
+
+        // === RENDER CHART HERE ===
+        renderChart(allRecords);
         
         // Render initial batch
         renderRecords(allRecords.slice(0, recordsLimit));
